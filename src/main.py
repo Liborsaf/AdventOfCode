@@ -8,7 +8,7 @@ from tasks import FirstDayTask
 def main():
     config = load_config()
 
-    instance = AdventOfCode(2022, __file__)
+    instance = AdventOfCode(2022)
     instance.enable_auto_input_fetch(config['remote']['session'], True)
 
     instance.register_task(1, FirstDayTask)
