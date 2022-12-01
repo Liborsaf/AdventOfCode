@@ -1,11 +1,8 @@
 import tomllib
 
-from aoc import AdventOfCode, AdventOfCodeTask
+from aoc import AdventOfCode
 
-
-class FirstDayTask(AdventOfCodeTask):
-    def run(self):
-        pass
+from tasks import FirstDayTask
 
 
 def main():
@@ -17,7 +14,7 @@ def main():
     instance.register_task(1, FirstDayTask)
 
     instance.execute(1)
-    # instance.execute_all()
+    # instance.execute_last()
 
 
 def load_config() -> object:
