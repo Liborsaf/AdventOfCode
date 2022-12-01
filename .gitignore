@@ -1,0 +1,9 @@
+# PyCharm
+.idea/
+
+# Environment
+venv/
+
+# Config
+config.toml
+cache/
