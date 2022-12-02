@@ -64,7 +64,7 @@ class SecondDayTask(AdventOfCodeTask):
             points += self.calculate_points(player, opponent)
 
             player = self.figure_thing(opponent, player_needs)
-            self.test(player, opponent, player_needs)
+            # self.test(player, opponent, player_needs)
 
             second_points += self.calculate_points(player, opponent)
 
