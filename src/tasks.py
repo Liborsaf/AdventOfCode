@@ -21,3 +21,13 @@ class FirstDayTask(AdventOfCodeTask):
         most_three_elves = sum(sorted_elves[:3])
 
         print(f"Most elf total: {most_elf}, Most 3 elves total: {most_three_elves}")
+
+class SecondDayTask(AdventOfCodeTask):
+    opponent_mapping = {
+        'A': 'Rock',
+        'B': 'Paper',
+        'C': 'Scissors'
+    }
+
+    def run(self):
+        print(self.input)

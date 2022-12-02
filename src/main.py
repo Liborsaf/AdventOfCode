@@ -2,7 +2,7 @@ import tomllib
 
 from aoc import AdventOfCode
 
-from tasks import FirstDayTask
+from tasks import FirstDayTask, SecondDayTask
 
 
 def main():
@@ -12,8 +12,9 @@ def main():
     instance.enable_auto_input_fetch(config['remote']['session'], True)
 
     instance.register_task(1, FirstDayTask)
+    instance.register_task(2, SecondDayTask)
 
-    instance.execute(1)
+    instance.execute(2)
     # instance.execute_last()
 
 
