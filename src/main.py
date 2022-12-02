@@ -1,10 +1,14 @@
 import tomllib
 
+# noinspection PyPackageRequirements
 from aoc import AdventOfCode
 
-from tasks import FirstDayTask, SecondDayTask
+# from tasks import FirstDayTask, SecondDayTask
+from tasks.first_day import FirstDayTask
+from tasks.second_day import SecondDayTask
 
 
+# noinspection PyUnresolvedReferences
 def main():
     config = load_config()
 

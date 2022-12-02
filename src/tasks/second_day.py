@@ -1,47 +1,23 @@
 from enum import Enum
-from typing import Optional, List
+from typing import Optional
 
+# noinspection PyPackageRequirements
 from aoc import AdventOfCodeTask
 
 
-class FirstDayTask(AdventOfCodeTask):
-    def run(self):
-        elves = self.sum_elves()
+class Thing(Enum):
+    Rock = 0
+    Paper = 1
+    Scissors = 2
 
-        sorted_elves = sorted(elves, reverse=True)
 
-        most_elf = sorted_elves[0]
-        most_three_elves = sum(sorted_elves[:3])
-
-        print(f"Most elf total: {most_elf}, Most 3 elves total: {most_three_elves}")
-
-    def sum_elves(self) -> List[int]:
-        elves = []
-        elf_calories = 0
-
-        for data in self.input.split("\n"):
-            if data == '':
-                elves.append(elf_calories)
-                elf_calories = 0
-
-                continue
-
-            elf_calories += int(data)
-
-        return elves
+class Round(Enum):
+    Lose = 0
+    Draw = 1
+    Win = 2
 
 
 class SecondDayTask(AdventOfCodeTask):
-    class Thing(Enum):
-        Rock = 0
-        Paper = 1
-        Scissors = 2
-
-    class Round(Enum):
-        Lose = 0
-        Draw = 1
-        Win = 2
-
     opponent_mapping = {
         'A': Thing.Rock,
         'B': Thing.Paper,
@@ -99,14 +75,14 @@ class SecondDayTask(AdventOfCodeTask):
 
         opponent_win_strategy = self.win_strategy[opponent]
 
-        if player_needs == self.Round.Draw:
+        if player_needs == Round.Draw:
             player = opponent
         else:
             for value in self.win_strategy.keys():
                 if value == opponent:
                     continue
-                elif (player_needs == self.Round.Win and value != opponent_win_strategy) or \
-                        (player_needs == self.Round.Lose and value == opponent_win_strategy):
+                elif (player_needs == Round.Win and value != opponent_win_strategy) or \
+                        (player_needs == Round.Lose and value == opponent_win_strategy):
                     player = value
 
                     break
@@ -115,11 +91,11 @@ class SecondDayTask(AdventOfCodeTask):
 
     def test(self, player: Thing, opponent: Thing, player_needs: Round):
         if player == opponent:
-            test_needs = self.Round.Draw
+            test_needs = Round.Draw
         elif self.win_strategy[player] == opponent:
-            test_needs = self.Round.Win
+            test_needs = Round.Win
         else:
-            test_needs = self.Round.Lose
+            test_needs = Round.Lose
 
         if test_needs != player_needs:
             print(f"Opponent: {opponent}, player: {player}, needs: {player_needs}")
