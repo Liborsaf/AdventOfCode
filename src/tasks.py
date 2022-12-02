@@ -1,3 +1,6 @@
+from enum import Enum
+from typing import Optional
+
 from aoc import AdventOfCodeTask
 
 
@@ -24,34 +27,44 @@ class FirstDayTask(AdventOfCodeTask):
 
 
 class SecondDayTask(AdventOfCodeTask):
+    class Thing(Enum):
+        Rock = 0
+        Paper = 1
+        Scissors = 2
+
+    class Round(Enum):
+        Lose = 0
+        Draw = 1
+        Win = 2
+
     opponent_mapping = {
-        'A': 'Rock',
-        'B': 'Paper',
-        'C': 'Scissors'
+        'A': Thing.Rock,
+        'B': Thing.Paper,
+        'C': Thing.Scissors
     }
 
     player_mapping = {
-        'X': 'Rock',
-        'Y': 'Paper',
-        'Z': 'Scissors'
+        'X': Thing.Rock,
+        'Y': Thing.Paper,
+        'Z': Thing.Scissors
     }
 
     player_mapping_needs = {
-        'X': 'Lose',
-        'Y': 'Draw',
-        'Z': 'Win'
+        'X': Round.Lose,
+        'Y': Round.Draw,
+        'Z': Round.Win
     }
 
     win_strategy = {
-        'Rock': 'Scissors',
-        'Scissors': 'Paper',
-        'Paper': 'Rock'
+        Thing.Rock: Thing.Scissors,
+        Thing.Scissors: Thing.Paper,
+        Thing.Paper: Thing.Rock
     }
 
     points_mapping = {
-        'Rock': 1,
-        'Paper': 2,
-        'Scissors': 3
+        Thing.Rock: 1,
+        Thing.Paper: 2,
+        Thing.Scissors: 3
     }
 
     def run(self):
@@ -59,6 +72,7 @@ class SecondDayTask(AdventOfCodeTask):
         second_points = 0
 
         for data in self.input.split("\n"):
+            # Skip last empty line
             if not data:
                 continue
 
@@ -68,39 +82,44 @@ class SecondDayTask(AdventOfCodeTask):
 
             points += self.calculate_points(player, opponent)
 
-            opponent_win_strategy = self.win_strategy[opponent]
-
-            if player_needs == 'Draw':
-                player = opponent
-            else:
-                for value in self.win_strategy.keys():
-                    if value == opponent:
-                        continue
-
-                    elif player_needs == 'Win' and value != opponent_win_strategy:
-                        player = value
-
-                        break
-                    elif player_needs == 'Lose' and value == opponent_win_strategy:
-                        player = value
-
-                        break
-
-            if player == opponent:
-                test_needs = "Draw"
-            elif self.win_strategy[player] == opponent:
-                test_needs = "Win"
-            else:
-                test_needs = "Lose"
-
-            if test_needs != player_needs:
-                print(f"Opponent: {opponent}, player: {player}, needs: {player_needs}")
+            player = self.figure_thing(opponent, player_needs)
+            self.test(player, opponent, player_needs)
 
             second_points += self.calculate_points(player, opponent)
 
         print(f"Total points: {points}, Total second points: {second_points}")
 
-    def calculate_points(self, player, opponent):
+    def figure_thing(self, opponent: Thing, player_needs: Round) -> Optional[Thing]:
+        player = None
+
+        opponent_win_strategy = self.win_strategy[opponent]
+
+        if player_needs == self.Round.Draw:
+            player = opponent
+        else:
+            for value in self.win_strategy.keys():
+                if value == opponent:
+                    continue
+                elif (player_needs == self.Round.Win and value != opponent_win_strategy) or \
+                        (player_needs == self.Round.Lose and value == opponent_win_strategy):
+                    player = value
+
+                    break
+
+        return player
+
+    def test(self, player: Thing, opponent: Thing, player_needs: Round):
+        if player == opponent:
+            test_needs = self.Round.Draw
+        elif self.win_strategy[player] == opponent:
+            test_needs = self.Round.Win
+        else:
+            test_needs = self.Round.Lose
+
+        if test_needs != player_needs:
+            print(f"Opponent: {opponent}, player: {player}, needs: {player_needs}")
+
+    def calculate_points(self, player: Thing, opponent: Thing) -> int:
         points = self.points_mapping[player]
 
         if opponent == player:
@@ -112,7 +131,5 @@ class SecondDayTask(AdventOfCodeTask):
         else:
             # Lose
             points += 0
-
-        # points += self.points_mapping[player]
 
         return points
