@@ -28,7 +28,7 @@ def main():
 
     # instance.execute_all()
     # instance.execute_last()
-    instance.execute_last(2022)  # <- not working, getting input from 2015 event
+    instance.execute_last(2022)
 
 
 def load_config() -> object:
