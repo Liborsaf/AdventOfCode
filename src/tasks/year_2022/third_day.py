@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 # noinspection PyPackageRequirements
 from aoc import AdventOfCodeTask
 
@@ -13,7 +15,7 @@ class ThirdDayTask(AdventOfCodeTask):
 
     def run(self):
         elves_groups = []
-        current_elf = []
+        current_group = []
 
         total_duplicity_items_priority = 0
         total_group_duplicity_items_priority = 0
@@ -23,12 +25,12 @@ class ThirdDayTask(AdventOfCodeTask):
             if not rucksack:
                 continue
 
-            if len(current_elf) == self.group_size:
-                elves_groups.append(current_elf)
+            if len(current_group) == self.group_size:
+                elves_groups.append(current_group)
 
-                current_elf = []
+                current_group = []
 
-            current_elf.append(rucksack)
+            current_group.append(rucksack)
 
             half_size = len(rucksack) // 2
 
@@ -46,23 +48,19 @@ class ThirdDayTask(AdventOfCodeTask):
             # print(f"Rucksack: {rucksack}, first compartment: {first_compartment}, second compartment: {second_compartment}")
 
         for group in elves_groups:
-            duplicity_items = ""
+            group_badge = ""
 
             for rucksack in group:
                 for item in rucksack:
-                    groups_contains = 0
+                    if self.contains_all_in_group(group, item, rucksack):
+                        group_badge = item
 
-                    for other_rucksack in group:
-                        if other_rucksack == rucksack:
-                            continue
+                        break
 
-                        if other_rucksack.count(item) > 0:
-                            groups_contains += 1
+            group_badge_priority = self.calculate_items_priority(group_badge)
+            print(f"Group: {group} - badge: {group_badge}, priority: {group_badge_priority}")
 
-                    if groups_contains == self.group_size - 1:  # and duplicity_items.count(item) == 0
-                        duplicity_items += item
-
-            total_group_duplicity_items_priority += self.calculate_items_priority(duplicity_items)
+            total_group_duplicity_items_priority += group_badge_priority
 
         print(f"Total duplicity items priority: {total_duplicity_items_priority}, total duplicity items priority of {self.group_size} elves group: {total_group_duplicity_items_priority}")
 
@@ -81,3 +79,15 @@ class ThirdDayTask(AdventOfCodeTask):
             total_priority += item_priority
 
         return total_priority
+
+    def contains_all_in_group(self, group: List[str], item: str, skip_rucksack: Optional[str] = None) -> bool:
+        groups_contains = 0
+
+        for other_rucksack in group:
+            if other_rucksack == skip_rucksack:
+                continue
+
+            if other_rucksack.count(item) > 0:
+                groups_contains += 1
+
+        return groups_contains == self.group_size - 1
