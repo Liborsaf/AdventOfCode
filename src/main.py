@@ -23,6 +23,7 @@ def main():
 
     instance.register_task(1, FirstDayTask2015)
     instance.register_task(2, SecondDayTask2015)
+    instance.register_task(3, ThirdDayTask2015)
 
     # instance.execute_all()
     # instance.execute_last()
