@@ -46,15 +46,21 @@ class ThirdDayTask(AdventOfCodeTask):
             # print(f"Rucksack: {rucksack}, first compartment: {first_compartment}, second compartment: {second_compartment}")
 
         for group in elves_groups:
-            rucksack = ''.join(group)
-
             duplicity_items = ""
 
-            for item in rucksack:
-                if rucksack.count(item) == self.group_size and duplicity_items.count(item) == 0:
-                    duplicity_items += item
+            for rucksack in group:
+                for item in rucksack:
+                    groups_contains = 0
 
-            print(rucksack)
+                    for other_rucksack in group:
+                        if other_rucksack == rucksack:
+                            continue
+
+                        if other_rucksack.count(item) > 0:
+                            groups_contains += 1
+
+                    if groups_contains == self.group_size - 1:  # and duplicity_items.count(item) == 0
+                        duplicity_items += item
 
             total_group_duplicity_items_priority += self.calculate_items_priority(duplicity_items)
 
