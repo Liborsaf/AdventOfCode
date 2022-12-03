@@ -18,6 +18,7 @@ def main():
 
     instance.register_task(1, FirstDayTask2022)
     instance.register_task(2, SecondDayTask2022)
+    instance.register_task(3, ThirdDayTask2022)
 
     instance.add_year(2015)
 
@@ -27,7 +28,7 @@ def main():
 
     # instance.execute_all()
     # instance.execute_last()
-    instance.execute_last()
+    instance.execute_last(2022)  # <- not working, getting input from 2015 event
 
 
 def load_config() -> object:
