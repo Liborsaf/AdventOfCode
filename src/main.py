@@ -3,9 +3,7 @@ import tomllib
 # noinspection PyPackageRequirements
 from aoc import AdventOfCode
 
-# from tasks import FirstDayTask, SecondDayTask
-from tasks.first_day import FirstDayTask
-from tasks.second_day import SecondDayTask
+from tasks import *
 
 
 # noinspection PyUnresolvedReferences
@@ -14,12 +12,20 @@ def main():
 
     instance = AdventOfCode(2022)
     instance.enable_auto_input_fetch(config['remote']['session'], True)
+    # instance.set_input("Hello, world!")
 
-    instance.register_task(1, FirstDayTask)
-    instance.register_task(2, SecondDayTask)
+    # instance.enable_debug()
 
-    instance.execute(2)
+    instance.register_task(1, FirstDayTask2022)
+    instance.register_task(2, SecondDayTask2022)
+
+    instance.add_year(2015)
+
+    instance.register_task(1, FirstDayTask2015)
+
+    # instance.execute_all()
     # instance.execute_last()
+    instance.execute_last()
 
 
 def load_config() -> object:

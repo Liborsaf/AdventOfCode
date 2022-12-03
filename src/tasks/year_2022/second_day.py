@@ -52,10 +52,12 @@ class SecondDayTask(AdventOfCodeTask):
         points = 0
         second_points = 0
 
-        for data in self.input.split("\n"):
+        for data in self.task_input.split("\n"):
             # Skip last empty line
             if not data:
                 continue
+
+            print(data)
 
             opponent = self.opponent_mapping[data[0]]
             player = self.player_mapping[data[2]]

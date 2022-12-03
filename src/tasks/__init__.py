@@ -1,2 +1,2 @@
-# from first_day import FirstDayTask
-# from second_day import SecondDayTask
+from .year_2022 import *
+from .year_2015 import *

@@ -19,7 +19,7 @@ class FirstDayTask(AdventOfCodeTask):
         elves = []
         elf_calories = 0
 
-        for data in self.input.split("\n"):
+        for data in self.task_input.split("\n"):
             if data == '':
                 elves.append(elf_calories)
                 elf_calories = 0
