@@ -21,12 +21,16 @@ class ThirdDayTask(AdventOfCodeTask):
         total_group_duplicity_items_priority = 0
 
         for rucksack in self.task_input.split("\n"):
+            # Skip last empty line
+            if not rucksack:
+                continue
+
+            current_group.append(rucksack)
+
             if len(current_group) == self.group_size:
                 elves_groups.append(current_group)
 
                 current_group = []
-
-            current_group.append(rucksack)
 
             half_size = len(rucksack) // 2
 
