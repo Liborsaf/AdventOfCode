@@ -7,8 +7,18 @@ class PresentFace:
         self.width = width
         self.height = height
 
-    def area(self) -> int:
-        return self.width * self.height
+        self.area = 0
+
+        # Precalculate area
+        self.calculate_area()
+
+    def calculate_area(self) -> int:
+        if self.area:
+            return self.area
+
+        self.area = self.width * self.height
+
+        return self.area
 
 
 class Present:
@@ -17,27 +27,32 @@ class Present:
         self.second_face = PresentFace(width, height)
         self.third_face = PresentFace(height, length)
 
+        self.surface_area = 0
+
+        # Precalculate surface area
+        self.calculate_surface_area()
+
         self.bow_ribbon_length = length * width * height
 
     def get_smallest_face(self):
-        # Precalculate areas of all sides
-        first_face_area = self.first_face.area()
-        second_face_area = self.second_face.area()
-        third_face_area = self.third_face.area()
-
         # Get area of the smallest side
-        smallest_face_area = min(first_face_area, second_face_area, third_face_area)
+        smallest_face_area = min(self.first_face.area, self.second_face.area, self.third_face.area)
 
-        if smallest_face_area == first_face_area:
+        if smallest_face_area == self.first_face.area:
             return self.first_face
-        elif smallest_face_area == second_face_area:
+        elif smallest_face_area == self.second_face.area:
             return self.second_face
-        elif smallest_face_area == third_face_area:
+        elif smallest_face_area == self.third_face.area:
             return self.third_face
 
-    def surface_area(self) -> int:
+    def calculate_surface_area(self) -> int:
+        if self.surface_area:
+            return self.surface_area
+
         # Calculate box surface area
-        return 2 * self.first_face.area() + 2 * self.second_face.area() + 2 * self.third_face.area()
+        self.surface_area = 2 * self.first_face.area + 2 * self.second_face.area + 2 * self.third_face.area
+
+        return self.surface_area
 
 
 # https://adventofcode.com/2015/day/2
@@ -57,10 +72,12 @@ class SecondDayTask(AdventOfCodeTask):
             present_smallest_face = present.get_smallest_face()
 
             # Sum total needed wrapping paper with some reserve
-            present_needed_wrapping_paper = present.surface_area() + present_smallest_face.area()
-            present_needed_ribbon = present.bow_ribbon_length
+            present_needed_wrapping_paper = present.surface_area + present_smallest_face.area
+            # Sum total needed ribbon for bow and present
+            present_needed_ribbon = 2 * present_smallest_face.width + 2 * present_smallest_face.height
+            present_total_needed_ribbon = present.bow_ribbon_length + present_needed_ribbon
 
             total_needed_wrapping_paper += present_needed_wrapping_paper
-            total_needed_ribbon += total_needed_ribbon
+            total_needed_ribbon += present_total_needed_ribbon
 
         print(f"Needed wrapping paper: {total_needed_wrapping_paper}, needed ribbon: {total_needed_ribbon}")
