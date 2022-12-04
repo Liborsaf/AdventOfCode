@@ -6,6 +6,7 @@ from aoc import AdventOfCodeTask
 class FourthDayTask(AdventOfCodeTask):
     def run(self):
         fully_contains_pairs = 0
+        partially_contains_pairs = 0
 
         for pair in self.task_input.split("\n"):
             if not pair:
@@ -23,12 +24,15 @@ class FourthDayTask(AdventOfCodeTask):
             second_pair_max = int(second_pair_max)
 
             fully_contains = True
+            partially_contains = False
 
             first_pair_numbers = [i for i in range(first_pair_min, first_pair_max + 1)]
 
             for i in range(second_pair_min, second_pair_max + 1):
                 if first_pair_numbers.count(i) == 0:
                     fully_contains = False
+                else:
+                    partially_contains = True
 
             if not fully_contains:
                 fully_contains = True
@@ -38,10 +42,16 @@ class FourthDayTask(AdventOfCodeTask):
                 for i in range(first_pair_min, first_pair_max + 1):
                     if second_pair_numbers.count(i) == 0:
                         fully_contains = False
+                    else:
+                        partially_contains = True
 
             if fully_contains:
                 fully_contains_pairs += 1
             # else:
             #    print(f"First: {first_pair}, second: {second_pair}, contains: {fully_contains}")
 
+            if partially_contains:
+                partially_contains_pairs += 1
+
         print(f"{fully_contains_pairs}")
+        print(f"{partially_contains_pairs}")
