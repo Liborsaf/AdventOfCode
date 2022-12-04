@@ -19,10 +19,10 @@ class ThirdDayTask(AdventOfCodeTask):
         x = 0
         y = 0
 
-        moves = len(self.task_input)
+        moves = len(self.parameters.input)
         more_presents_houses = 0
 
-        for direction in self.task_input:
+        for direction in self.parameters.input:
             if direction == '^':
                 y += 1
             elif direction == '<':

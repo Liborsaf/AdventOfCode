@@ -61,7 +61,7 @@ class SecondDayTask(AdventOfCodeTask):
         total_needed_wrapping_paper = 0
         total_needed_ribbon = 0
 
-        for data in self.task_input.split("\n"):
+        for data in self.parameters.input.split("\n"):
             # Skip last empty line
             if not data:
                 continue

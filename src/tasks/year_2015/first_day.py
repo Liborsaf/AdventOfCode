@@ -8,8 +8,8 @@ class FirstDayTask(AdventOfCodeTask):
         floor = 0
         basement_character_index = 0
 
-        for i in range(len(self.task_input)):
-            character = self.task_input[i]
+        for i in range(len(self.parameters.input)):
+            character = self.parameters.input[i]
 
             if character == '(':
                 floor += 1
