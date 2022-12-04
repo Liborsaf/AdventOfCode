@@ -28,8 +28,11 @@ def main():
     instance.register_task(3, ThirdDayTask2015)
 
     # instance.execute_all()
+    # instance.execute_all(year=2022)
     # instance.execute_last()
-    instance.execute_last(2022)
+    # instance.execute_last(year=2022)
+    # instance.execute(2, year=2022)
+    instance.execute(4, year=2022, variant=1)
 
 
 def load_config() -> object:

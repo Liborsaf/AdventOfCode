@@ -1,14 +1,20 @@
 # noinspection PyPackageRequirements
-from aoc import AdventOfCodeTask
+from aoc import AdventOfCodeTask, AdventOfCodeTaskVariant
+
+
+class FourthDayTask(AdventOfCodeTask):
+    def __init__(self):
+        self.add_variant(1, FourthDayTaskFirstVariant)
+        self.add_variant(2, FourthDayTaskSecondVariant)
 
 
 # https://adventofcode.com/2015/day/1
-class FourthDayTask(AdventOfCodeTask):
+class FourthDayTaskFirstVariant(AdventOfCodeTaskVariant):
     def run(self):
         fully_contains_pairs = 0
         partially_contains_pairs = 0
 
-        for pair in self.task_input.split("\n"):
+        for pair in self.parameters.input.split("\n"):
             if not pair:
                 continue
 
@@ -55,3 +61,8 @@ class FourthDayTask(AdventOfCodeTask):
 
         print(f"{fully_contains_pairs}")
         print(f"{partially_contains_pairs}")
+
+
+class FourthDayTaskSecondVariant(AdventOfCodeTaskVariant):
+    def run(self):
+        print("Hello, world!")

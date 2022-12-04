@@ -52,7 +52,7 @@ class SecondDayTask(AdventOfCodeTask):
         points = 0
         second_points = 0
 
-        for data in self.task_input.split("\n"):
+        for data in self.parameters.input.split("\n"):
             # Skip last empty line
             if not data:
                 continue

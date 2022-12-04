@@ -20,7 +20,7 @@ class ThirdDayTask(AdventOfCodeTask):
         total_duplicity_items_priority = 0
         total_group_duplicity_items_priority = 0
 
-        for rucksack in self.task_input.split("\n"):
+        for rucksack in self.parameters.input.split("\n"):
             # Skip last empty line
             if not rucksack:
                 continue
