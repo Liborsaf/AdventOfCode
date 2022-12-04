@@ -24,16 +24,6 @@ class FourthDayTask(AdventOfCodeTask):
 
             fully_contains = True
 
-            """
-            for i in range(first_pair_min, first_pair_max):
-                result = self.is_in_range(i, second_pair_min, second_pair_max)
-                print(f"Check 1: {result}")
-
-                if not result:
-                    fully_contains = False
-
-                    break
-            """
             first_pair_numbers = [i for i in range(first_pair_min, first_pair_max + 1)]
 
             for i in range(second_pair_min, second_pair_max + 1):
@@ -43,17 +33,6 @@ class FourthDayTask(AdventOfCodeTask):
             if not fully_contains:
                 fully_contains = True
 
-                """
-                for i in range(second_pair_min, second_pair_max):
-                    result = self.is_in_range(i, first_pair_min, first_pair_max)
-                    print(f"Check 2: {result}")
-
-                    if not result:
-                        fully_contains = False
-
-                        break
-                """
-
                 second_pair_numbers = [i for i in range(second_pair_min, second_pair_max + 1)]
 
                 for i in range(first_pair_min, first_pair_max + 1):
@@ -62,13 +41,7 @@ class FourthDayTask(AdventOfCodeTask):
 
             if fully_contains:
                 fully_contains_pairs += 1
-            else:
-                print(f"First: {first_pair}, second: {second_pair}, contains: {fully_contains}")
+            # else:
+            #    print(f"First: {first_pair}, second: {second_pair}, contains: {fully_contains}")
 
         print(f"{fully_contains_pairs}")
-
-    @staticmethod
-    def is_in_range(x: int, min: int, max: int) -> bool:
-        print(f"Test {min} < {x} < {max}")
-
-        return min <= x <= max
