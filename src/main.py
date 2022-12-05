@@ -20,6 +20,7 @@ def main():
     instance.register_task(2, SecondDayTask2022)
     instance.register_task(3, ThirdDayTask2022)
     instance.register_task(4, FourthDayTask2022)
+    instance.register_task(5, FifthDayTask2022)
 
     instance.add_year(2015)
 
@@ -30,9 +31,9 @@ def main():
     # instance.execute_all()
     # instance.execute_all(year=2022)
     # instance.execute_last()
-    # instance.execute_last(year=2022)
+    instance.execute_last(year=2022)
     # instance.execute(2, year=2022)
-    instance.execute(4, year=2022, variant=1)
+    # instance.execute(4, year=2022, variant=1)
 
 
 def load_config() -> object:
