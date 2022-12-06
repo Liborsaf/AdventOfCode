@@ -1,3 +1,5 @@
+from typing import List
+
 # noinspection PyPackageRequirements
 from aoc import AdventOfCodeTask
 
@@ -5,25 +7,23 @@ from aoc import AdventOfCodeTask
 class SixthDayTask(AdventOfCodeTask):
     def run(self):
         data = self.parameters.input.replace("\n", "")
-        print(data)
+        print(f"Data: {data}")
 
-        packet_marker = 0
+        packet_marker = self.find_marker(data, 4)
+        message_marker = self.find_marker(data[packet_marker:], 14) + packet_marker
 
-        for i in range(len(data) - 3):
-            sublist = data[i:i + 4]
+        print(f"Packer marker: {packet_marker}, message marker: {message_marker}")
 
-            if packet_marker == 0 and sum([1 for item in sublist if sublist.count(item) > 1]) == 0:
-                packet_marker = i + 4
+    @staticmethod
+    def find_marker(data: str | List[str], length: int) -> int:
+        marker = 0
 
-        packet = data[packet_marker:]
+        for i in range(len(data) - length + 1):
+            sub_data = data[i:i + length]
 
-        message_marker = 0
+            if sum([1 for item in sub_data if sub_data.count(item) > 1]) == 0:
+                marker = i + length
 
-        for i in range(len(packet) - 13):
-            sublist = packet[i:i + 14]
+                break
 
-            if message_marker == 0 and sum([1 for item in sublist if sublist.count(item) > 1]) == 0:
-                message_marker = i + 14
-
-        print(packet_marker)
-        print(packet_marker + message_marker)
+        return marker
