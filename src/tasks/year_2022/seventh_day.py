@@ -7,6 +7,9 @@ from typing_extensions import Unpack
 from aoc import AdventOfCodeTask
 
 
+debug_level = 2
+
+
 class DirectoryPrintArgs(TypedDict):
     level: int
     hide_empty: bool
@@ -137,7 +140,8 @@ class FileSystem(Directory):
         # print(f"Directory changed to {self.current_path}")
 
     def list_directory(self, content: List[str]):
-        print(f"Listing directory {self.current_path}")
+        if debug_level >= 3:
+            print(f"Listing directory {self.current_path}")
 
         for item in content:
             self.__process_directory_item(item)
@@ -152,14 +156,17 @@ class FileSystem(Directory):
             # assert item and item.is_directory(), f"Folder {name} not found!"
 
             if not item:
-                print(f"Creating folder {name}")
+                if debug_level >= 3:
+                    print(f"Creating folder {name}")
+
                 self.create_directory([name])
         else:
             entry = entry.split(" ")
             size = int(entry[0])
             name = entry[1]
 
-            print(f"Adding file {name} (size={size}) to {self.current_path}")
+            if debug_level >= 3:
+                print(f"Adding file {name} (size={size}) to {self.current_path}")
 
             item = self.get_item(self.current_path)
             assert item and item.is_directory(), f"No folder on path {self.current_path}"
@@ -226,9 +233,13 @@ class SeventhDayTask(AdventOfCodeTask):
 
             self.process_command(command)
 
-        self.file_system.print(hide_empty=True)
+        if debug_level >= 2:
+            if debug_level >= 3:
+                print("---")
 
-        print("---")
+            self.file_system.print(hide_empty=True)
+
+            print("---")
 
         size = 0
 
@@ -236,11 +247,13 @@ class SeventhDayTask(AdventOfCodeTask):
             item_size = item.get_size()
 
             if item.is_directory() and item_size >= 100_000:
-                print(f"{item.name} (size={item_size})")
+                if debug_level >= 1:
+                    print(f"{item.name} (size={item_size})")
 
                 size += item_size
 
-        print("---")
+        if debug_level >= 1:
+            print("---")
         print(f"Size: {size}")
 
     def clean(self):
