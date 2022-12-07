@@ -22,6 +22,7 @@ def main():
     instance.register_task(4, FourthDayTask2022)
     instance.register_task(5, FifthDayTask2022)
     instance.register_task(6, SixthDayTask2022)
+    instance.register_task(7, SeventhDayTask2022)
 
     instance.add_year(2016)
 
@@ -36,8 +37,8 @@ def main():
     # instance.execute_all()
     # instance.execute_all(year=2022)
     # instance.execute_last()
-    instance.execute_last(year=2016)
-    # instance.execute_last(year=2022)
+    # instance.execute_last(year=2016)
+    instance.execute_last(year=2022)
     # instance.execute(2, year=2022)
     # instance.execute(4, year=2022, variant=1)
 
