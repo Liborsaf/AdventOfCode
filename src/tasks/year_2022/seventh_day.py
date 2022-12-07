@@ -7,11 +7,16 @@ from typing_extensions import Unpack
 from aoc import AdventOfCodeTask
 
 
-debug_level = 2
+debug_level = 0  # [1], 2, 3
+debug_empty_directories = False
 
 
 class DirectoryPrintArgs(TypedDict):
     level: int
+    hide_empty: bool
+
+
+class DirectoryTreePrintArgs(TypedDict):
     hide_empty: bool
 
 
@@ -104,11 +109,26 @@ class Directory(File):
 
         return None
 
+    def fetch_directory_tree(self, directories: List[Directory]):
+        for item in self.get_items():
+            if item.is_directory():
+                directories.append(item)
+
+                item.fetch_directory_tree(directories)
+
     def get_items(self):
         return self.content
 
+    def calculate_size(self) -> int:
+        self.size = self.get_size()
+
+        return self.size
+
     def get_size(self) -> int:
         size = super().get_size()
+
+        if size > 0:
+            return size
 
         for item in self.content:
             size += item.get_size()
@@ -124,6 +144,7 @@ class FileSystem(Directory):
         super().__init__('/')
 
         self.current_path = []
+        self.directory_tree = []
 
     def change_directory(self, directory: str):
         # print(f"Going directory to '{directory}'")
@@ -173,10 +194,29 @@ class FileSystem(Directory):
 
             item.add_file(File(name, size))
 
+    def build_directory_tree(self):
+        self.fetch_directory_tree(self.directory_tree)
+
+        for directory in self.directory_tree:
+            directory.calculate_size()
+
     def print(self, **kwargs: Unpack[DirectoryPrintArgs]):
         print(f"- / (dir, size={self.get_size()})")
 
         super().print(level=1, hide_empty=kwargs.get('hide_empty'))
+
+    def print_directory_tree(self, **kwargs: Unpack[DirectoryTreePrintArgs]):
+        kwargs.setdefault('hide_empty', False)
+        hide_empty = kwargs.get('hide_empty')
+
+        for directory in self.directory_tree:
+            directory_size = directory.get_size()
+
+            if directory_size > 0 or (directory_size == 0 and not hide_empty):
+                print(f"{directory.name} (size={directory.get_size()})")
+
+    def get_directory_tree(self):
+        return self.directory_tree
 
 
 class Command:
@@ -233,27 +273,35 @@ class SeventhDayTask(AdventOfCodeTask):
 
             self.process_command(command)
 
+        self.file_system.build_directory_tree()
+
         if debug_level >= 2:
             if debug_level >= 3:
                 print("---")
 
-            self.file_system.print(hide_empty=True)
+            self.file_system.print(hide_empty=not debug_empty_directories)
+
+            print("---")
+
+        # elif debug_level >= 1:
+        if debug_level >= 1:
+            self.file_system.print_directory_tree(hide_empty=not debug_empty_directories)
 
             print("---")
 
         size = 0
 
-        for item in self.file_system.get_items():
-            item_size = item.get_size()
+        for directory in self.file_system.get_directory_tree():
+            directory_size = directory.get_size()
 
-            if item.is_directory() and item_size >= 100_000:
-                if debug_level >= 1:
-                    print(f"{item.name} (size={item_size})")
+            if directory_size <= 100_000:
+                # if debug_level >= 1:
+                #    print(f"{directory.name} (size={directory_size})")
 
-                size += item_size
+                size += directory_size
 
-        if debug_level >= 1:
-            print("---")
+        # if debug_level >= 1:
+        #    print("---")
         print(f"Size: {size}")
 
     def clean(self):
