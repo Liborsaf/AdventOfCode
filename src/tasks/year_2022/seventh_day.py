@@ -9,7 +9,7 @@ from aoc import AdventOfCodeTask
 # TODO: This task is big mess and needs cleanup someday
 
 
-debug_level = 1  # (0), [1], 2, 3
+debug_level = 0  # (0), [1], 2, 3
 debug_empty_directories = False
 
 
@@ -73,8 +73,6 @@ class Directory(File):
 
         start = ''.join(' ' for _ in range(level))
 
-        # print(f"{start}- {self.name} (dir, size={self.get_size()})")
-
         for item in self.content:
             item_size = item.get_size()
             item_type = 'dir' if item.is_directory() else 'file'
@@ -101,7 +99,6 @@ class Directory(File):
 
             return item
 
-        # return None if directory == self else directory
         return directory
 
     def __get_item(self, name: str) -> Optional[File | Directory]:
@@ -288,7 +285,6 @@ class SeventhDayTask(AdventOfCodeTask):
 
             print("---")
 
-        # elif debug_level >= 1:
         if debug_level >= 1:
             self.file_system.print_directory_tree(hide_empty=not debug_empty_directories)
 
@@ -301,13 +297,10 @@ class SeventhDayTask(AdventOfCodeTask):
 
         needed_to_clean_space = needed_update_space - currently_available_space
 
-        # print("---")
-
         if debug_level >= 1:
             print(f"Max disk space: {max_disk_space}")
             print(f"Needed update space: {needed_update_space}, to clean space: {needed_to_clean_space}")
-            print(
-                f"Currently used space: {currently_used_space}, available space: {currently_available_space}")  # ({currently_used_space / max_disk_space * 100}%)
+            print(f"Currently used space: {currently_used_space}, available space: {currently_available_space}")
             print("---")
 
         size = 0
@@ -317,16 +310,11 @@ class SeventhDayTask(AdventOfCodeTask):
             directory_size = directory.get_size()
 
             if directory_size <= 100_000:
-                # if debug_level >= 1:
-                #    print(f"{directory.name} (size={directory_size})")
-
                 size += directory_size
 
             if directory_size >= needed_to_clean_space and needed_directory_size == 0:
                 needed_directory_size = directory_size
 
-        # if debug_level >= 1:
-        #    print("---")
         print(f"Size: {size}")
         print(f"Needed directory size to remove: {needed_directory_size}")
 
