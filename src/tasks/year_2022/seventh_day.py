@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-import copy
-from typing import List, Deque, Optional
-from collections import deque
+from typing import List, Optional, TypedDict
+from typing_extensions import Unpack
 
 # noinspection PyPackageRequirements
 from aoc import AdventOfCodeTask
+
+
+class DirectoryPrintArgs(TypedDict):
+    level: int
+    hide_empty: bool
 
 
 class File:
@@ -16,6 +20,9 @@ class File:
     def get_size(self) -> int:
         return self.size
 
+    def is_directory(self) -> bool:
+        return False
+
 
 class Directory(File):
     def __init__(self, name: str):
@@ -23,44 +30,79 @@ class Directory(File):
 
         self.content = []
 
-    def add_file(self, file: File):
-        self.content.append(file)
+    def create_directory(self, path: List[str]) -> Directory:
+        directory = self
 
-    def create_directory(self, name: str) -> Directory:
-        directory = self.get_item(name)
-
-        if directory:
-            return directory
-
-        directory = Directory(name)
-        self.content.append(directory)
+        for item in path:
+            directory = directory.__create_directory(item)
 
         return directory
 
-    def get_item(self, name: str) -> Optional[File | Directory]:
+    def __create_directory(self, name: str) -> Directory:
+        item = self.__get_item(name)
+
+        if item:
+            assert item.is_directory(), "Requested directory name is already used for file!"
+
+            return item
+
+        item = Directory(name)
+        self.content.append(item)
+
+        return item
+
+    def add_file(self, file: File):
+        self.content.append(file)
+
+    def print(self, **kwargs: Unpack[DirectoryPrintArgs]):
+        kwargs.setdefault('level', 1)
+        level = kwargs.get('level')
+
+        kwargs.setdefault('hide_empty', False)
+        hide_empty = kwargs.get('hide_empty')
+
+        start = ''.join(' ' for _ in range(level))
+
+        # print(f"{start}- {self.name} (dir, size={self.get_size()})")
+
+        for item in self.content:
+            item_size = item.get_size()
+            item_type = 'dir' if item.is_directory() else 'file'
+
+            if item_size > 0 or (item_size == 0 and not hide_empty):
+                print(f"{start}- {item.name} ({item_type}, size={item_size})")
+
+                if item.is_directory():
+                    item.print(level=(level + 1), hide_empty=hide_empty)
+
+    def get_item(self, path: List[str]) -> Optional[File | Directory]:
+        directory = self
+
+        for item in path:
+            item = directory.__get_item(item)
+
+            if not item:
+                return None
+
+            if item.is_directory():
+                directory = item
+
+                continue
+
+            return item
+
+        # return None if directory == self else directory
+        return directory
+
+    def __get_item(self, name: str) -> Optional[File | Directory]:
         for item in self.content:
             if item.name == name:
                 return item
 
         return None
 
-    def get_items(self) -> List[File | Directory]:
+    def get_items(self):
         return self.content
-
-    def print(self, hide_empty: bool = False, level: int = 0):
-        start = ''.join(' ' for i in range(level))
-
-        for item in self.content:
-            item_size = item.get_size()
-            item_type = 'dir' if isinstance(item, Directory) else 'file'
-
-            if item_size > 0 or (item_size == 0 and not hide_empty):
-                print(f"{start}- {item.name} ({item_type}, size={item_size})")
-
-                if item_type == 'dir':
-                    item.print(hide_empty, level + 1)
-
-                    continue
 
     def get_size(self) -> int:
         size = super().get_size()
@@ -70,115 +112,161 @@ class Directory(File):
 
         return size
 
+    def is_directory(self) -> bool:
+        return True
+
 
 class FileSystem(Directory):
     def __init__(self):
         super().__init__('/')
 
-    def get_path(self, path: Deque[str]) -> Optional[File | Directory]:
-        directory = self
+        self.current_path = []
 
-        for item in path:
-            # (directory if directory else self)
-            item = directory.get_item(item)
+    def change_directory(self, directory: str):
+        # print(f"Going directory to '{directory}'")
 
-            if isinstance(item, Directory):
-                directory = item
+        if directory == '/':
+            self.current_path = []
+        elif directory == '..':
+            self.current_path.pop()
+        else:
+            self.current_path.append(directory)
 
-                continue
+        self.create_directory(self.current_path)
 
-            return item
+        # print(f"Directory changed to {self.current_path}")
 
-        return directory
+    def list_directory(self, content: List[str]):
+        print(f"Listing directory {self.current_path}")
 
-    def make_directory(self, path: Deque[str]):
-        directory = self
+        for item in content:
+            self.__process_directory_item(item)
 
-        for item in path:
-            directory = directory.create_directory(item)
+    def __process_directory_item(self, entry: str):
+        if entry.startswith('dir'):
+            name = entry.replace("dir ", "")
 
-    def print(self, hide_empty: bool = False):
+            # Verify existence of folder
+            # item = self.__get_item(name)
+            item = self.get_item([name])
+            # assert item and item.is_directory(), f"Folder {name} not found!"
+
+            if not item:
+                print(f"Creating folder {name}")
+                self.create_directory([name])
+        else:
+            entry = entry.split(" ")
+            size = int(entry[0])
+            name = entry[1]
+
+            print(f"Adding file {name} (size={size}) to {self.current_path}")
+
+            item = self.get_item(self.current_path)
+            assert item and item.is_directory(), f"No folder on path {self.current_path}"
+
+            item.add_file(File(name, size))
+
+    def print(self, **kwargs: Unpack[DirectoryPrintArgs]):
         print(f"- / (dir, size={self.get_size()})")
 
-        super().print(hide_empty, 1)
+        super().print(level=1, hide_empty=kwargs.get('hide_empty'))
+
+
+class Command:
+    def __init__(self, name: str, args: List[str]):
+        self.name = name
+        self.args = args
+
+        self.output = None
+
+    def print(self):
+        print(f"{self}")
+
+        if self.output:
+            for line in self.output:
+                print(f"  {line}")
+
+    def set_output(self, output: List[str]):
+        self.output = output
+
+    def __str__(self):
+        return f"{self.name} {self.args if self.args else ''}"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class SeventhDayTask(AdventOfCodeTask):
+    def __init__(self):
+        self.last_output = []
+        self.last_command = None
+
+        self.command_history = []
+
+        self.file_system = FileSystem()
+
     def run(self):
         data = self.parameters.input[:-1]
 
-        file_system = FileSystem()
-
-        last_command = ""
-        output = []
-
-        current_directory = deque([])
-
-        process_list = []
-
         for line in data.split("\n"):
-            if line.startswith('$'):
+            if line.startswith("$"):
+                # Process command
                 line = line.replace("$ ", "").split(" ")
-                command = line[0]
-                args = line[1:]
 
-                if output:
-                    # print(f"Current directory: {directory.name}")
-
-                    process_list.append((last_command, output, copy.deepcopy(current_directory)))
-
-                    output = []
-
-                # print(f"{command} {args if args else ''}")
-
-                if command == 'cd':
-                    if args[0] == '/':
-                        current_directory = deque([])
-                    elif args[0] == '..':
-                        current_directory.pop()
-                    else:
-                        current_directory.append(args[0])
-
-                    # print(f"Current directory: {current_directory}")
-
-                    file_system.make_directory(copy.deepcopy(current_directory))
-
-                last_command = command
+                self.parse_command(Command(line[0], line[1:]))
             else:
-                output.append(line)
+                # Process output
+                self.last_output.append(line)
 
-        for (command, output, current_directory) in process_list:
-            directory = file_system.get_path(current_directory)
-            assert isinstance(directory, Directory), "Requested path is not directory!"
+        self.parse_output()
+        self.clean()
 
-            if command == 'ls':
-                for item in output:
-                    # print(f"Verify: {item}")
+        for command in self.command_history:
+            # command.print()
 
-                    if item.startswith('dir'):
-                        item = item.replace('dir ', '')
+            self.process_command(command)
 
-                        target_directory = directory.get_item(item)
-
-                        assert isinstance(target_directory, Directory), "Target path is not directory!"
-                    else:
-                        item = item.split(" ")
-
-                        directory.add_file(File(item[1], int(item[0])))
-
-        file_system.print(True)
+        self.file_system.print(hide_empty=True)
 
         print("---")
 
         size = 0
 
-        for item in file_system.get_items():
+        for item in self.file_system.get_items():
             item_size = item.get_size()
 
-            if isinstance(item, Directory) and item_size >= 100_000:
+            if item.is_directory() and item_size >= 100_000:
                 print(f"{item.name} (size={item_size})")
 
                 size += item_size
 
         print("---")
         print(f"Size: {size}")
+
+    def clean(self):
+        self.last_output = None
+        self.last_command = None
+
+    def parse_command(self, command: Command):
+        self.parse_output()
+
+        # print(f"Parsing command: {command}")
+        self.last_command = command
+
+        self.command_history.append(command)
+
+    def parse_output(self):
+        if self.last_output:
+            self.last_command.set_output(self.last_output)
+
+            self.last_output = []
+
+    def process_command(self, command: Command):
+        if command.name == 'cd':
+            self.file_system.change_directory(command.args[0])
+        elif command.name == 'ls':
+            assert not command.args, "List directory args not supported!"
+
+            self.file_system.list_directory(command.output)
+        else:
+            assert "This command is not implemented!"
