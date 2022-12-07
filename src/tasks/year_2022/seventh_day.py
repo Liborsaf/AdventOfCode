@@ -176,7 +176,7 @@ class SeventhDayTask(AdventOfCodeTask):
             item_size = item.get_size()
 
             if isinstance(item, Directory) and item_size >= 100_000:
-                print(f"{item.name} (size={size})")
+                print(f"{item.name} (size={item_size})")
 
                 size += item_size
 
