@@ -6,8 +6,10 @@ from typing_extensions import Unpack
 # noinspection PyPackageRequirements
 from aoc import AdventOfCodeTask
 
+# TODO: This task is big mess and needs cleanup someday
 
-debug_level = 0  # [1], 2, 3
+
+debug_level = 1  # (0), [1], 2, 3
 debug_empty_directories = False
 
 
@@ -200,6 +202,9 @@ class FileSystem(Directory):
         for directory in self.directory_tree:
             directory.calculate_size()
 
+        # Sort directory tree
+        self.directory_tree = sorted(self.directory_tree, key=lambda directory_: directory_.get_size())  # reverse=True
+
     def print(self, **kwargs: Unpack[DirectoryPrintArgs]):
         print(f"- / (dir, size={self.get_size()})")
 
@@ -289,7 +294,24 @@ class SeventhDayTask(AdventOfCodeTask):
 
             print("---")
 
+        max_disk_space = 70000000
+        needed_update_space = 30000000
+        currently_used_space = self.file_system.get_size()
+        currently_available_space = max_disk_space - currently_used_space
+
+        needed_to_clean_space = needed_update_space - currently_available_space
+
+        # print("---")
+
+        if debug_level >= 1:
+            print(f"Max disk space: {max_disk_space}")
+            print(f"Needed update space: {needed_update_space}, to clean space: {needed_to_clean_space}")
+            print(
+                f"Currently used space: {currently_used_space}, available space: {currently_available_space}")  # ({currently_used_space / max_disk_space * 100}%)
+            print("---")
+
         size = 0
+        needed_directory_size = 0
 
         for directory in self.file_system.get_directory_tree():
             directory_size = directory.get_size()
@@ -300,9 +322,13 @@ class SeventhDayTask(AdventOfCodeTask):
 
                 size += directory_size
 
+            if directory_size >= needed_to_clean_space and needed_directory_size == 0:
+                needed_directory_size = directory_size
+
         # if debug_level >= 1:
         #    print("---")
         print(f"Size: {size}")
+        print(f"Needed directory size to remove: {needed_directory_size}")
 
     def clean(self):
         self.last_output = None
