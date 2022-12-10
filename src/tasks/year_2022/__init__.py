@@ -5,3 +5,4 @@ from .fourth_day import FourthDayTask as FourthDayTask2022
 from .fifth_day import FifthDayTask as FifthDayTask2022
 from .sixth_day import SixthDayTask as SixthDayTask2022
 from .seventh_day import SeventhDayTask as SeventhDayTask2022
+from .eighth_day import EighthDayTask as EighthDayTask2022
