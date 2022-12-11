@@ -125,6 +125,25 @@ class TreeGrid:
             else:
                 visible_from.append(direction)
 
+        for y in range(self.height):
+            direction = Direction.Top if y < tree.y else (Direction.Bottom if y > tree.y else None)  # None
+            # direction = Direction.Right if x > tree.x else direction
+
+            if not direction or skip_direction == direction:
+                continue
+
+            other_tree = self.get_tree(tree.x, y)
+
+            # print(direction)
+
+            if other_tree.height >= tree.height:
+                skip_direction = direction
+
+                if visible_from.count(direction) > 0:
+                    visible_from.remove(direction)
+            else:
+                visible_from.append(direction)
+
         return len(visible_from) > 0
 
 
@@ -140,8 +159,8 @@ class EighthDayTask(AdventOfCodeTask):
         self.grid.test_trees()
         print("---")
 
-        self.grid.print()
-        print("---")
+        # self.grid.print()
+        # print("---")
         self.grid.print(True)
 
         visible_trees = sum([1 for tree in self.grid.get_trees() if tree.visible])

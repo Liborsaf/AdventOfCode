@@ -24,6 +24,7 @@ def main():
     instance.register_task(6, SixthDayTask2022)
     instance.register_task(7, SeventhDayTask2022)
     instance.register_task(8, EighthDayTask2022)
+    instance.register_task(9, NinthDayTask2022)
 
     instance.add_year(2016)
 
